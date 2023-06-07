@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express"
 import dotenv from "dotenv"
+import router from "./Router"
 import { prisma } from "./database/db"
 
 dotenv.config()
@@ -10,7 +11,9 @@ const PORT = process.env.PORT || 3001
 
 app.use(express.json())
 
-app.get("/", (req, res) => {
+app.use("/", router)
+
+app.get("/", (req: Request, res: Response) => {
   res.send("Initialized API")
 })
 
@@ -22,4 +25,3 @@ prisma.$connect().then(() => {
 }).catch((err) => {
   console.log("error: ", err)
 })
-
