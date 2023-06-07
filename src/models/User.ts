@@ -1,9 +1,9 @@
-export interface User {
+export interface usuarios {
   id_usuario: number
   nome: string      
   email: string          
   senha: string           
-  telefone?: number
+  telefone: number | null
   tipo: string           
   username: string
 }
