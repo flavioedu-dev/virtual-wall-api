@@ -1,11 +1,13 @@
 import { Router, Request, Response } from "express"
-import { prisma } from "../database/db"
+
+// Controller
+import { UserController } from "../controllers/UserController"
 
 const router = Router()
 
 router.get("/", async (req: Request, res: Response) => {
-  const allUsers = await prisma.usuarios.findMany()
-  res.json(allUsers)
+  const { statusCode, body } = await UserController.getAll()
+  res.status(statusCode).json(body)
 })
 
 export default router
