@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model administradores {
+  id_admin   Int          @id(map: "adminitradores_pkey") @default(autoincrement())
+  id_usuario Int
+  usuarios   usuarios     @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "fk_usuario")
+  alteracoes alteracoes[]
+}
+
+model alteracoes {
+  id_alteracao    Int             @id @default(autoincrement())
+  data_alteracao  DateTime        @db.Date
+  id_admin        Int
+  id_post         Int
+  administradores administradores @relation(fields: [id_admin], references: [id_admin], onDelete: NoAction, onUpdate: NoAction, map: "fk_admin")
+  postagens       postagens       @relation(fields: [id_post], references: [id_post], onDelete: NoAction, onUpdate: NoAction, map: "fk_post")
+}
+
+model postagens {
+  id_post    Int          @id @default(autoincrement())
+  conteudo   String?      @db.VarChar
+  criado_em  DateTime     @db.Date
+  id_usuario Int
+  alteracoes alteracoes[]
+  usuarios   usuarios     @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade, onUpdate: NoAction, map: "fk_usuario")
+}
+
+model usuarios {
+  id_usuario      Int               @id(map: "users_pkey") @default(autoincrement())
+  nome            String            @db.VarChar(50)
+  email           String            @db.VarChar(50)
+  senha           String            @db.VarChar(50)
+  telefone        Int?
+  tipo            String            @db.VarChar(50)
+  username        String            @db.VarChar(50)
+  administradores administradores[]
+  postagens       postagens[]
+}
