@@ -10,4 +10,9 @@ router.get("/", async (req: Request, res: Response) => {
   res.status(statusCode).json(body)
 })
 
+router.post("/", async (req: Request, res: Response) => {
+  const { statusCode, body } = await UserController.createUser(req.body)
+  res.status(statusCode).json(body)
+})
+
 export default router

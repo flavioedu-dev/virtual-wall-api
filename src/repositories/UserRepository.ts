@@ -6,5 +6,19 @@ export const UserRepository = {
     const allUsers = await prisma.usuarios.findMany()
 
     return allUsers
+  },
+
+  async createUser({ email, nome, senha, tipo, username }: usuarios): Promise<usuarios>{
+    const newUser = await prisma.usuarios.create({
+      data: {
+        nome,
+        email,
+        senha,
+        tipo,
+        username
+      }
+    })
+    
+    return newUser
   }
 }
