@@ -35,11 +35,11 @@ model postagens {
 model usuarios {
   id_usuario      Int               @id(map: "users_pkey") @default(autoincrement())
   nome            String            @db.VarChar(50)
-  email           String            @db.VarChar(50)
+  email           String            @db.VarChar(50)        @unique
   senha           String            @db.VarChar(50)
   telefone        Int?
   tipo            String            @db.VarChar(50)
-  username        String            @db.VarChar(50)
+  username        String            @db.VarChar(50)        @unique
   administradores administradores[]
   postagens       postagens[]
 }
