@@ -1,7 +1,15 @@
+// DB
 import { usuarios } from "@prisma/client"
-import { UserRepository } from "../repositories/UserRepository"
+// Protocols
 import { HttpResponse } from "./protocols"
+// Repository
+import { UserRepository } from "../repositories/UserRepository"
+// Dependencies
 import * as EmailValidator from "email-validator"
+import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt"
+import { isAdmin } from "../models/Admin"
+import { AdminRepository } from "../repositories/AdminRepository"
 
 export const UserController = {
   async getAll(): Promise<HttpResponse<usuarios[]>> {
@@ -28,7 +36,7 @@ export const UserController = {
     }
   },
 
-  async createUser(body: usuarios): Promise<HttpResponse<Omit<usuarios, "senha">>> {
+  async createUser(body: isAdmin): Promise<HttpResponse<Omit<usuarios, "senha">>> {
     try {
       // Checking if all required properties are filled
       const requireProps = ["email", "nome", "senha", "tipo", "username"]
@@ -70,6 +78,17 @@ export const UserController = {
         }
       }
 
+      // Checking if admin code is valid
+      if(body.adminCode && body.adminCode !== "@souadmin") {
+        return {
+          statusCode: 404,
+          body: "Admin code invalid.",
+        }
+      }
+
+      const newPass = await bcrypt.hash(body.senha, Number(process.env.SALT))
+      body.senha = newPass
+
       // Create a new user
       const newUser = await UserRepository.createUser(body)
       // Check if any failure occurred
@@ -80,7 +99,12 @@ export const UserController = {
         }
       }
 
-      // User created successfully
+      // Register admin
+      if(body.adminCode){
+        await AdminRepository.createAdmin(newUser.id_usuario)
+      }
+
+      // // User created successfully
       return {
         statusCode: 201,
         body: newUser,

@@ -36,7 +36,7 @@ model usuarios {
   id_usuario      Int               @id(map: "users_pkey") @default(autoincrement())
   nome            String            @db.VarChar(50)
   email           String            @db.VarChar(50)        @unique
-  senha           String            @db.VarChar(50)
+  senha           String            @db.VarChar(100)
   telefone        Int?
   tipo            String            @db.VarChar(50)
   username        String            @db.VarChar(50)        @unique
