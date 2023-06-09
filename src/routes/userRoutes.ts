@@ -1,7 +1,9 @@
 import { Router, Request, Response } from "express"
+import { IRequestUser } from "../middlewares/authToken"
 
 // Controller
 import { UserController } from "../controllers/UserController"
+import { authToken } from "../middlewares/authToken"
 
 const router = Router()
 
@@ -22,6 +24,11 @@ router.post("/login", async (req: Request, res: Response) => {
   // Inserting token in cookies
   res.cookie("token", body, { httpOnly: true })
   res.status(statusCode).json({ message: "Authentication successful." })
+})
+
+router.get("/protected", authToken, (req: IRequestUser, res: Response) => {
+  const id = req.userId
+  res.status(200).json({ id: id })
 })
 
 
