@@ -153,7 +153,7 @@ export const UserController = {
     )
     return {
       statusCode: 200,
-      body: "Authentication successful.",
+      body: isAdmin ? "Authentication admin successful.": "Authentication user successful.",
       token: token
     }
   },
