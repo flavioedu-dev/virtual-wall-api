@@ -20,14 +20,16 @@ router.post("/register", async (req: Request, res: Response) => {
 })
 
 router.post("/login", async (req: Request, res: Response) => {
-  const { statusCode, body } = await UserController.loginUser(req.body)
+  const { statusCode, body, token } = await UserController.loginUser(req.body)
   // Inserting token in cookies
-  res.cookie("token", body, { httpOnly: true })
-  res.status(statusCode).json({ message: "Authentication successful." })
+  res.cookie("token", token, { httpOnly: true })
+  res.status(statusCode).json(body)
 })
 
 router.get("/protected", authToken, (req: IRequestUser, res: Response) => {
   const id = req.userId
+  const token = req.cookies.token
+  console.log("Cookies: ", token)
   res.status(200).json({ id: id })
 })
 
