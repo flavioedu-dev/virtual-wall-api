@@ -27,10 +27,12 @@ router.post("/login", async (req: Request, res: Response) => {
 })
 
 router.get("/protected", authToken, (req: IRequestUser, res: Response) => {
-  const id = req.userId
+  const userId = req.userId
+  const adminId = req.adminId
+
   const token = req.cookies.token
-  console.log("Cookies: ", token)
-  res.status(200).json({ id: id })
+  // console.log("Cookies: ", token)
+  res.status(200).json({ userId, adminId })
 })
 
 

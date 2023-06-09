@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken"
 
 export interface IRequestUser extends Request {
   userId?: number
+  adminId?: number
 }
 
 export const authToken = (req: IRequestUser, res: Response, next: NextFunction): void | null => {
@@ -19,6 +20,8 @@ export const authToken = (req: IRequestUser, res: Response, next: NextFunction):
     decoded = decoded as IRequestUser
 
     req.userId = decoded.userId
+    req.adminId = decoded.adminId
+
     next()
   })
   
