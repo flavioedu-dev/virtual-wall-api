@@ -36,7 +36,9 @@ export const UserController = {
     }
   },
 
-  async createUser(body: isAdmin): Promise<HttpResponse<Omit<usuarios, "senha">>> {
+  async createUser(
+    body: isAdmin
+  ): Promise<HttpResponse<Omit<usuarios, "senha">>> {
     try {
       // Checking if all required properties are filled
       const requireProps = ["email", "nome", "senha", "tipo", "username"]
@@ -63,7 +65,7 @@ export const UserController = {
       }
 
       // Checking if email is valid
-      if(!EmailValidator.validate(body.email)){
+      if (!EmailValidator.validate(body.email)) {
         return {
           statusCode: 400,
           body: "Invalid email.",
@@ -71,7 +73,7 @@ export const UserController = {
       }
 
       // Checking if user already exists
-      if(await UserRepository.getUserByEmail(body.email)){
+      if (await UserRepository.getUserByEmail(body.email)) {
         return {
           statusCode: 401,
           body: "Email already registered.",
@@ -79,7 +81,7 @@ export const UserController = {
       }
 
       // Checking if admin code is valid
-      if(body.adminCode && body.adminCode !== "@souadmin") {
+      if (body.adminCode && body.adminCode !== "@souadmin") {
         return {
           statusCode: 404,
           body: "Admin code invalid.",
@@ -92,28 +94,62 @@ export const UserController = {
       // Create a new user
       const newUser = await UserRepository.createUser(body)
       // Check if any failure occurred
-      if(!newUser) {
+      if (!newUser) {
         return {
           statusCode: 400,
-          body: "User not created."
+          body: "User not created.",
         }
       }
 
       // Register admin
-      if(body.adminCode){
+      if (body.adminCode) {
         await AdminRepository.createAdmin(newUser.id_usuario)
       }
 
+      const token = jwt.sign(
+        { userId: body.id_usuario },
+        `${process.env.TOKEN_SECRET}`,
+        { expiresIn: "1h" }
+      )
       // // User created successfully
       return {
         statusCode: 201,
-        body: newUser,
+        body: token,
       }
     } catch (error) {
       return {
         statusCode: 500,
         body: "Something went wrong.",
       }
+    }
+  },
+
+  async loginUser({ email, senha }: usuarios): Promise<HttpResponse<usuarios>> {
+    // Find user by email
+    const user = await UserRepository.getUserByEmail(email)
+    if (!user) {
+      return {
+        statusCode: 400,
+        body: "Invalid credentials.",
+      }
+    }
+    // Checking if password is correct
+    const verifyPassword = await bcrypt.compare(senha, user.senha)
+    if (!verifyPassword) {
+      return {
+        statusCode: 400,
+        body: "Invalid credentials.",
+      }
+    }
+    // Generate token
+    const token = jwt.sign(
+      { userId: user.id_usuario },
+      `${process.env.TOKEN_SECRET}`,
+      { expiresIn: "1h" }
+    )
+    return {
+      statusCode: 200,
+      body: token,
     }
   },
 }

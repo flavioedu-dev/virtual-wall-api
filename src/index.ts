@@ -2,6 +2,7 @@ import express, { Request, Response } from "express"
 import dotenv from "dotenv"
 import router from "./Router"
 import { prisma } from "./database/db"
+import cookieParser from "cookie-parser"
 
 dotenv.config()
 
@@ -10,6 +11,7 @@ const app = express()
 const PORT = process.env.PORT || 3001
 
 app.use(express.json())
+app.use(cookieParser())
 
 app.use("/", router)
 
