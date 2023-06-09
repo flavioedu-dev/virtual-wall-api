@@ -1,5 +1,5 @@
 // DB
-import { usuarios } from "@prisma/client"
+import { administradores, usuarios } from "@prisma/client"
 // Protocols
 import { HttpResponse } from "./protocols"
 // Repository
@@ -102,12 +102,13 @@ export const UserController = {
       }
 
       // Register admin
+      let newAdmin: administradores | null = null
       if (body.adminCode) {
-        await AdminRepository.createAdmin(newUser.id_usuario)
+        newAdmin = await AdminRepository.createAdmin(newUser.id_usuario)
       }
 
       const token = jwt.sign(
-        { userId: body.id_usuario },
+        { userId: body.id_usuario, adminId: newAdmin?.id_admin},
         `${process.env.TOKEN_SECRET}`,
         { expiresIn: "1h" }
       )
@@ -141,9 +142,12 @@ export const UserController = {
         body: "Invalid credentials.",
       }
     }
+
+    const isAdmin = await AdminRepository.getAdminById(user.id_usuario)
+
     // Generate token
     const token = jwt.sign(
-      { userId: user.id_usuario },
+      { userId: user.id_usuario, adminId: isAdmin?.id_admin },
       `${process.env.TOKEN_SECRET}`,
       { expiresIn: "1h" }
     )
