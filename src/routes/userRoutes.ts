@@ -13,9 +13,9 @@ router.get("/", async (req: Request, res: Response) => {
 })
 
 router.post("/register", async (req: Request, res: Response) => {
-  const { statusCode, body } = await UserController.createUser(req.body)
+  const { statusCode, body, token } = await UserController.createUser(req.body)
   // Inserting token in cookies
-  res.cookie("token", body, { httpOnly: true })
+  res.cookie("token", token, { httpOnly: true })
   res.status(statusCode).json(body)
 })
 

@@ -81,7 +81,7 @@ export const UserController = {
       }
 
       // Checking if admin code is valid
-      if (body.adminCode && body.adminCode !== "@souadmin") {
+      if (body.adminCode && body.adminCode !== "@souadmin" || body.adminCode === "") {
         return {
           statusCode: 404,
           body: "Admin code invalid.",
@@ -115,7 +115,8 @@ export const UserController = {
       // // User created successfully
       return {
         statusCode: 201,
-        body: token,
+        body: newAdmin ? "Admin created successfully." : "User created successfully.",
+        token: token
       }
     } catch (error) {
       return {
