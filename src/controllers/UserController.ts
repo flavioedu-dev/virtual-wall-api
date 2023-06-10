@@ -64,6 +64,15 @@ export const UserController = {
         }
       }
 
+      // Checking if username already exists
+      const usernameExists = await UserRepository.getUserByUsername(body.username)
+      if(usernameExists) {
+        return {
+          statusCode: 400,
+          body: "Username already exists."
+        }
+      }
+
       // Checking if email is valid
       if (!EmailValidator.validate(body.email)) {
         return {

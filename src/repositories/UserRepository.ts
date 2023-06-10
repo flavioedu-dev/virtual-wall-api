@@ -18,6 +18,15 @@ export const UserRepository = {
     return user
   },
 
+  async getUserByUsername(username: string): Promise<usuarios | null> {
+    const user = await prisma.usuarios.findUnique({
+      where: {
+        username: username,
+      },
+    })
+    return user
+  },
+
   async createUser({
     email,
     nome,
@@ -31,7 +40,7 @@ export const UserRepository = {
         email,
         senha,
         tipo,
-        username,
+        username: username.toLowerCase(),
       },
     })
     // Removing user password
