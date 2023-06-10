@@ -80,6 +80,14 @@ export const UserController = {
         }
       }
 
+      // Checking if password has at least 8 characters
+      if(body.senha.length < 8) {
+        return {
+          statusCode: 400,
+          body: "Password requires at least 8 characters."
+        }
+      }
+
       // Checking if admin code is valid
       if (body.adminCode && body.adminCode !== "@souadmin" || body.adminCode === "") {
         return {
